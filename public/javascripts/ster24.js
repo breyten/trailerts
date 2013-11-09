@@ -85,7 +85,7 @@ Ster24.process_queue = function() {
   if (typeof(Ster24.data.player) == 'undefined') {
     var youtubeID = Ster24.queue.pop();
     console.log('Embedding youtube video ' + youtubeID);
-    var params = { allowScriptAccess: "always" };
+    var params = { allowScriptAccess: "always", allowFullScreen: "true" };
         var atts = { id: "myytplayer" };
         swfobject.embedSWF("http://www.youtube.com/v/" + youtubeID + "?enablejsapi=1&playerapiid=ytplayer&version=3",
                            "ytapiplayer", "425", "356", "8", null, null, params, atts);    
