@@ -15,9 +15,14 @@ var Ster24 = window.Ster24 || {
 function onYouTubePlayerReady(playerId) {
   console.log('youtube player ready!');
   Ster24.data.player = document.getElementById("myytplayer");
+  Ster24.data.player.addEventListener("onStateChange", "onytplayerStateChange");
   Ster24.data.player.playVideo();
 }
-    
+
+function onytplayerStateChange(newState) {
+   console.log("Player's new state: " + newState);
+}
+
 Ster24.init = function() {
   console.log('ster24 inited!');
   Ster24.fetch_new_ad();
@@ -25,7 +30,7 @@ Ster24.init = function() {
 
 Ster24.fetch_new_ad = function() {
   $.get('/random', function (data) {
-    var product = data.branddescr.trim();
+    var product = data.advertiserdescr.trim();
     console.log('got a new ad: ' + product);
     //console.dir(data);
     Ster24.search_youtube(product + ' reclame');
@@ -34,7 +39,7 @@ Ster24.fetch_new_ad = function() {
 
 Ster24.search_youtube = function(terms) {
   $.get(
-    'https://www.googleapis.com/youtube/v3/search?part=snippet&q=' + terms.replace(/\s+/g, '+').toLowerCase() + '&videoDuration=short&videoEmbeddable=true&type=video&videoCaption=closedCaption&key=AIzaSyBJJQPGXqu2BN3owWu7iIaan2exWSHZpAM',
+    'https://www.googleapis.com/youtube/v3/search?part=snippet&q=' + terms.replace(/\s+/g, '+').toLowerCase() + '&videoDuration=short&videoEmbeddable=true&type=video&key=AIzaSyBJJQPGXqu2BN3owWu7iIaan2exWSHZpAM',
     function (data) {
       console.log('got youtube data!:');
       console.dir(data);
