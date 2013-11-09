@@ -4,9 +4,11 @@ GEM
     httparty (0.11.0)
       multi_json (~> 1.0)
       multi_xml (>= 0.5.2)
+    inifile (2.0.2)
     kgio (2.8.1)
     multi_json (1.7.7)
     multi_xml (0.5.4)
+    mysql2 (0.3.14)
     rack (1.5.2)
     rack-protection (1.5.0)
       rack
@@ -28,6 +30,8 @@ PLATFORMS
 
 DEPENDENCIES
   httparty
+  inifile
+  mysql2
   rack
   shotgun
   sinatra

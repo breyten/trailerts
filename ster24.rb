@@ -6,6 +6,7 @@ require 'json'
 
 require 'sinatra'
 require 'httparty'
+require 'mysql2'
 
 set :session_secret, ENV["SESSION_KEY"] || 'too secret'
 
@@ -21,4 +22,13 @@ end
 
 get '/' do
   erb :index
+end
+
+get '/random' do
+  response.headers['Content-type'] = "application/json"
+  
+  client = Mysql2::Client.new(
+    :host => "localhost", :username => "spots", :password => "spots", :database => "sterspot"
+  )
+  client.query("SELECT * FROM spots ORDER BY RAND() LIMIT 1").first.to_json
 end
