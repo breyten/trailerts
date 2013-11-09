@@ -20,7 +20,21 @@ function onYouTubePlayerReady(playerId) {
 }
 
 function onytplayerStateChange(newState) {
-   console.log("Player's new state: " + newState);
+  // This event fires whenever the player's state changes. The value that the API passes to your event listener function will specify an integer that corresponds to the new player state. Possible values are:
+  // -1 (unstarted)
+  // 0 (ended)
+  // 1 (playing)
+  // 2 (paused)
+  // 3 (buffering)
+  // 5 (video cued).
+  console.log("Player's new state: " + newState);
+  if ((newState == -1) || (newState == 5)) {
+    Ster24.data.player.playVideo();
+  }
+  
+  if (newState == 0) {
+    Ster24.process_queue();
+  }
 }
 
 Ster24.init = function() {
@@ -29,12 +43,14 @@ Ster24.init = function() {
 };
 
 Ster24.fetch_new_ad = function() {
-  $.get('/random', function (data) {
-    var product = data.advertiserdescr.trim();
-    console.log('got a new ad: ' + product);
-    //console.dir(data);
-    Ster24.search_youtube(product + ' reclame');
-  }, 'json');
+  if (Ster24.queue.length <= 10) {
+    $.get('/random', function (data) {
+      var product = data.advertiserdescr.trim();
+      console.log('got a new ad: ' + product);
+      //console.dir(data);
+      Ster24.search_youtube(product + ' reclame');
+    }, 'json');
+  }
 };
 
 Ster24.search_youtube = function(terms) {
@@ -45,15 +61,32 @@ Ster24.search_youtube = function(terms) {
       console.dir(data);
       if (data.items.length > 0) {
         var youtubeID = data.items[0].id.videoId;
-        console.log('Embedding youtube video ' + youtubeID);
-        var params = { allowScriptAccess: "always" };
-            var atts = { id: "myytplayer" };
-            swfobject.embedSWF("http://www.youtube.com/v/" + youtubeID + "?enablejsapi=1&playerapiid=ytplayer&version=3",
-                               "ytapiplayer", "425", "356", "8", null, null, params, atts);
+        Ster24.queue.push(youtubeID);
+        //Ster24.process_queue();
       } else {
         console.log('no youtube video found for : ' + terms.replace(/\s+/g, '+'));
       }
+      Ster24.fetch_new_ad();
     }, 'json');
+};
+
+Ster24.process_queue = function() {
+  if (Ster24.queue.length <= 0) {
+    // load new video in background
+    return;
+  }
+
+  if (typeof(Ster24.data.player) == 'undefined') {
+    var youtubeID = Ster24.queue.pop();
+    console.log('Embedding youtube video ' + youtubeID);
+    var params = { allowScriptAccess: "always" };
+        var atts = { id: "myytplayer" };
+        swfobject.embedSWF("http://www.youtube.com/v/" + youtubeID + "?enablejsapi=1&playerapiid=ytplayer&version=3",
+                           "ytapiplayer", "425", "356", "8", null, null, params, atts);    
+  } else {
+    //Ster24.data.player.cueVideoById("5PZfFyWcYEM");
+  }
+  Ster24.fetch_new_ad();
 };
 
 $(document).ready(function() {
