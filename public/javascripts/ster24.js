@@ -7,6 +7,7 @@ if(typeof(String.prototype.trim) === "undefined")
 }
 
 var Ster24 = window.Ster24 || {
+  slug: undefined,
   data: {},
   queue: [],
   player: undefined,
@@ -45,7 +46,13 @@ Ster24.init = function() {
 
 Ster24.fetch_new_ad = function() {
   if (Ster24.queue.length <= 10) {
-    $.get('/random', function (data) {
+    var random_url = '/random';
+    if (!Ster24.data.slug) {
+      random_url = '/random';
+    } else {
+      random_url = '/random/' + Ster24.data.slug;      
+    }
+    $.get(random_url, function (data) {
       var product = data.advertiserdescr.trim();
       console.log('got a new ad: ' + product);
       //console.dir(data);
