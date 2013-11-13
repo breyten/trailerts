@@ -52,6 +52,8 @@ Ster24.fetch_new_ad = function() {
     } else {
       random_url = '/random/' + Ster24.data.slug;      
     }
+    var random_bit = Math.round(new Date().getTime() / 1000);
+    random_url = random_url + '?_=' + random_bit;
     $.get(random_url, function (data) {
       var product = data.advertiserdescr.trim();
       console.log('got a new ad: ' + product);
