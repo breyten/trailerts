@@ -7,6 +7,7 @@ if(typeof(String.prototype.trim) === "undefined")
 }
 
 var Ster24 = window.Ster24 || {
+  max_queue_length: 10,
   slug: undefined,
   data: {},
   queue: [],
@@ -45,7 +46,7 @@ Ster24.init = function() {
 };
 
 Ster24.fetch_new_ad = function() {
-  if (Ster24.queue.length <= 10) {
+  if (Ster24.queue.length <= Ster24.max_queue_length) {
     var random_url = '/random';
     if (!Ster24.data.slug) {
       random_url = '/random';
@@ -70,18 +71,25 @@ Ster24.search_youtube = function(terms) {
       console.log('got youtube data!:');
       console.dir(data);
       if (data.items.length > 0) {
-        var youtubeID = data.items[0].id.videoId;
-        if (Ster24.queue.indexOf(youtubeID) < 0) {
-          Ster24.queue.push(youtubeID);
-          if (Ster24.startup) {
-            Ster24.startup = false;
-            Ster24.process_queue();
+        var videos_added = 0;
+        for(item_idx in data.items) {
+          var youtubeID = data.items[item_idx].id.videoId;
+          if ((videos_added == 0) && (Ster24.queue.indexOf(youtubeID) < 0)) {
+            Ster24.queue.push(youtubeID);
+            videos_added = videos_added + 1;
+            if (Ster24.startup) {
+              Ster24.startup = false;
+              Ster24.process_queue();
+            }
           }
         }
       } else {
         console.log('no youtube video found for : ' + terms.replace(/\s+/g, '+'));
       }
-      Ster24.fetch_new_ad();
+      
+      if (Ster24.queue.length < Ster24.max_queue_length) {
+        Ster24.fetch_new_ad();
+      }
     }, 'json');
 };
 
@@ -102,7 +110,10 @@ Ster24.process_queue = function() {
     var youtubeID = Ster24.queue.pop();
     Ster24.data.player.cueVideoById(youtubeID);
   }
-  Ster24.fetch_new_ad();
+
+  if (Ster24.queue.length < Ster24.max_queue_length) {
+    Ster24.fetch_new_ad();
+  }
 };
 
 $(document).ready(function() {
