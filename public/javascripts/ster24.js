@@ -104,8 +104,10 @@ Ster24.process_queue = function() {
     console.log('Embedding youtube video ' + youtubeID);
     var params = { allowScriptAccess: "always", allowFullScreen: "true" };
         var atts = { id: "myytplayer" };
+        var yt_height = Math.floor((screen.height - 140) * 0.90);
+        var yt_width = Math.floor(yt_height * 1.33);
         swfobject.embedSWF("http://www.youtube.com/v/" + youtubeID + "?enablejsapi=1&playerapiid=ytplayer&version=3",
-                           "ytapiplayer", "425", "356", "8", null, null, params, atts);    
+                           "ytapiplayer", yt_width, yt_height, "8", null, null, params, atts);    
   } else {
     var youtubeID = Ster24.queue.pop();
     Ster24.data.player.cueVideoById(youtubeID);
