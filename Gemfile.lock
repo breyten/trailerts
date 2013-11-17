@@ -1,3 +1,10 @@
+GIT
+  remote: git@github.com:breyten/themoviedb.git
+  revision: 6f9692401c1f0d3d43d5acd8d35adb0a109ab83f
+  specs:
+    themoviedb (0.0.10)
+      httparty
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -35,4 +42,5 @@ DEPENDENCIES
   rack
   shotgun
   sinatra
+  themoviedb!
   unicorn

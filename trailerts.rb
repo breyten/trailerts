@@ -8,6 +8,7 @@ require 'sinatra'
 require 'httparty'
 require 'mysql2'
 require 'inifile'
+require 'themoviedb'
 
 set :session_secret, ENV["SESSION_KEY"] || 'too secret'
 
@@ -54,11 +55,23 @@ get '/' do
   erb :index
 end
 
+get '/import' do
+  response.headers['Content-type'] = "application/json"
+  
+  @config = get_config
+  @tmdb = Tmdb::Api.key(@config['themoviedb']['key'])
+  @tmdb_config = Tmdb::Configuration.new
+  @tmdb_config.base_url.to_json
+end
+
 get '/random' do
   response.headers['Content-type'] = "application/json"
   
   @config = get_config
-  record = random_record(@config)
+  @tmdb = Tmdb::Api.key(@config['themoviedb']['key'])
+  #@tmdb_config = Tmdb::Configuration.new
+  #@tmdb_config.base_url
+  record = Tmdb::Movie.now_playing.sample
   record.to_json
 end
 

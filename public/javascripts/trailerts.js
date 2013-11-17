@@ -56,10 +56,10 @@ Trailerts.fetch_new_ad = function() {
     var random_bit = Math.round(new Date().getTime() / 1000);
     random_url = random_url + '?_=' + random_bit;
     $.get(random_url, function (data) {
-      var product = data.advertiserdescr.trim();
+      var product = data.title.trim();
       console.log('got a new ad: ' + product);
       //console.dir(data);
-      Trailerts.search_youtube(product + ' reclame');
+      Trailerts.search_youtube(product + ' trailer');
     }, 'json');
   }
 };

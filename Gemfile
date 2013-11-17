@@ -7,4 +7,4 @@ gem "unicorn"
 gem "shotgun"
 gem "mysql2"
 gem "inifile"
-# gem "themoviedb", :git => 'git://github.com/ahmetabdi/themoviedb.git'
+gem "themoviedb", :git => 'git@github.com:breyten/themoviedb.git'
