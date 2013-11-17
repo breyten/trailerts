@@ -18,7 +18,7 @@ not_found do
 end
 
 def get_config
-  IniFile.load('ster24.ini')
+  IniFile.load('trailerts.ini')
 end
 
 def random_record(config, channel = nil)
