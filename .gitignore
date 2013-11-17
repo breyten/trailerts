@@ -18,3 +18,4 @@ _yardoc
 doc/
 *.json
 .DS_Store
+trailerts.ini
