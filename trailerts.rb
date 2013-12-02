@@ -9,6 +9,7 @@ require 'httparty'
 require 'mysql2'
 require 'inifile'
 require 'themoviedb'
+require 'redis'
 
 set :session_secret, ENV["SESSION_KEY"] || 'too secret'
 
@@ -41,9 +42,20 @@ get '/random' do
   response.headers['Content-type'] = "application/json"
   
   @config = get_config
-  @tmdb = Tmdb::Api.key(@config['themoviedb']['key'])
-  record = Tmdb::Movie.now_playing.sample
-  record.to_json
+  
+  redis = Redis.new
+
+  cached_movies = redis['trailerts_now_playing']
+  if cached_movies
+    movies = JSON.parse(cached_movies)
+  else
+    @tmdb = Tmdb::Api.key(@config['themoviedb']['key'])
+    movies = Tmdb::Movie.now_playing
+    redis['trailerts_now_playing'] = movies.to_json
+    redis.expire('trailerts_now_playing', 43200) # half a day
+  end
+  movie = movies.sample
+  movie.to_json
 end
 
 get '/random/:slug' do
