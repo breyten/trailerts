@@ -47,11 +47,11 @@ Trailerts.init = function() {
 
 Trailerts.fetch_new_ad = function() {
   if (Trailerts.queue.length <= Trailerts.max_queue_length) {
-    var random_url = '/random';
+    var random_url = '/api';
     if (!Trailerts.data.slug) {
-      random_url = '/random';
+      random_url = '/api/upcoming';
     } else {
-      random_url = '/random/' + Trailerts.data.slug;      
+      random_url = '/api/' + Trailerts.data.slug;      
     }
     var random_bit = Math.round(new Date().getTime() / 1000);
     random_url = random_url + '?_=' + random_bit;

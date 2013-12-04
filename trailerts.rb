@@ -32,13 +32,13 @@ end
 
 
 get '/' do
-  @slug = nil
+  @slug = 'upcoming'
   @config = get_config
 
   erb :index
 end
 
-get '/now_playing' do
+get '/api/now_playing' do
   response.headers['Content-type'] = "application/json"
   
   @config = get_config
@@ -58,7 +58,7 @@ get '/now_playing' do
   movie.to_json
 end
 
-get '/upcoming' do
+get '/api/upcoming' do
   response.headers['Content-type'] = "application/json"
   
   @config = get_config
@@ -78,7 +78,7 @@ get '/upcoming' do
   movie.to_json
 end
 
-get '/discover' do
+get '/api/discover' do
   response.headers['Content-type'] = "application/json"
   
   @config = get_config
@@ -105,7 +105,7 @@ get '/discover' do
   movie.to_json
 end
 
-get '/random/:slug' do
+get '/api/:slug' do
   response.headers['Content-type'] = "application/json"
 
   @config = get_config
