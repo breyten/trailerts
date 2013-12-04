@@ -1,8 +1,8 @@
 GIT
   remote: git@github.com:breyten/themoviedb.git
-  revision: 1c2e8fdc97fd94d88459662b21e6caa9338694ea
+  revision: 832af76ca6ad311501e70d1b4dd6a376991dbef8
   specs:
-    themoviedb (0.0.11)
+    themoviedb (0.0.12)
       httparty
 
 GEM
