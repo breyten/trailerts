@@ -31,16 +31,31 @@
           <ul class="nav navbar-nav">
             <li class="active"><a href="/">Home</a></li>
             <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Kanalen <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                      <li><a href="/">Alles</a></li>
-                      <li class="divider"></li>
-                      <% @genres['genres'].each do |section| %>
-                      <% slug = section['name'].downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') %>
-                      <li><a href="/<%= slug %>"><%= section['name'] %></a></li>
-                      <% end %>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Kanalen <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/">Upcoming</a></li>
+                <li><a href="/now_playing">Now playing</a></li>
+                <li class="divider"></li>
+                <li>
+                  <div class="row" style="width: 400px;">
+                  <% genre_count = 0 %>
+                  <% @genres['genres'].each do |section| %>
+                    <% if genre_count % 3 == 0 %>
+                    <ul class="list-unstyled col-md-4">
+                    <% end %>
+                    <li><a href="/<%= section['slug'] %>"><%= section['name'] %></a></li>
+                    <% genre_count += 1 %>
+                    <% if genre_count % 3 == 0 %>
                     </ul>
-                  </li>
+                    <% end %>
+                  <% end %>
+                  <% if genre_count % 3 != 0 %>
+                  </ul>
+                  <% end %>
+                  </div>
+                </li>
+              </ul>
+            </li>
             <li><a href="http://www.hackdeoverheid.nl/contact/">Contact</a></li>
           </ul>
         </div><!--/.nav-collapse -->

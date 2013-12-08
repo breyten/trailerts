@@ -70,8 +70,14 @@ get '/update/genres' do
   secret_correct = (@config['trailerts']['secret'] == params['secret'])
   raise Sinatra::NotFound, 'Forbidden' unless params.has_key?('secret')
 
-  genres = get_if_cached('trailerts_genres', Proc.new { Tmdb::Genre.list })
-  genres.to_json
+  cached_genres = get_if_cached('trailerts_genres', Proc.new { 
+    genres = Tmdb::Genre.list 
+    genres['genres'].each do |genre|
+      genre['slug'] = genre['name'].downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
+    end
+    genres
+  })
+  cached_genres.to_json
 end
 
 get '/api/now_playing' do
