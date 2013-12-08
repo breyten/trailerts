@@ -1,3 +1,5 @@
-[bier]
-field=advertiserid
-choices=10238, 10392, 11894, 12825, 13190, 23724, 25431, 28773
+[trailerts]
+secret=xxxxxx
+
+[themoviedb]
+key=xxxxx

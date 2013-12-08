@@ -35,8 +35,9 @@
                     <ul class="dropdown-menu">
                       <li><a href="/">Alles</a></li>
                       <li class="divider"></li>
-                      <% @config.sections.each do |section| %>
-                      <li><a href="/<%= section %>"><%= section %></a></li>
+                      <% @genres['genres'].each do |section| %>
+                      <% slug = section['name'].downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') %>
+                      <li><a href="/<%= slug %>"><%= section['name'] %></a></li>
                       <% end %>
                     </ul>
                   </li>

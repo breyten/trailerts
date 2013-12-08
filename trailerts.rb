@@ -51,6 +51,8 @@ get '/' do
   @slug = 'upcoming'
   @config = get_config
 
+  @genres = get_if_cached('trailerts_genres', Proc.new { Tmdb::Genre.list })
+
   erb :index
 end
 
@@ -59,6 +61,17 @@ get '/now_playing' do
   @config = get_config
 
   erb :index
+end
+
+get '/update/genres' do
+  @config = get_config
+
+  secret_configured_and_passed = params.has_key?('secret') && @config.has_section?('trailerts') && @config['trailerts'].has_key?('secret')
+  secret_correct = (@config['trailerts']['secret'] == params['secret'])
+  raise Sinatra::NotFound, 'Forbidden' unless params.has_key?('secret')
+
+  genres = get_if_cached('trailerts_genres', Proc.new { Tmdb::Genre.list })
+  genres.to_json
 end
 
 get '/api/now_playing' do
