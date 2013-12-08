@@ -39,6 +39,16 @@ def get_if_cached(cache_key, proc, cache_timeout = 43200)
   movies
 end
 
+def get_if_cached_genres
+  cached_genres = get_if_cached('trailerts_genres', Proc.new { 
+    genres = Tmdb::Genre.list 
+    genres['genres'].each do |genre|
+      genre['slug'] = genre['name'].downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
+    end
+    genres
+  })
+end
+
 # Usage: partial :foo
 helpers do
   def partial(page, options={})
@@ -50,8 +60,7 @@ end
 get '/' do
   @slug = 'upcoming'
   @config = get_config
-
-  @genres = get_if_cached('trailerts_genres', Proc.new { Tmdb::Genre.list })
+  @genres = get_if_cached_genres
 
   erb :index
 end
@@ -59,6 +68,7 @@ end
 get '/now_playing' do
   @slug = 'now_playing'
   @config = get_config
+  @genres = get_if_cached_genres
 
   erb :index
 end
@@ -70,13 +80,7 @@ get '/update/genres' do
   secret_correct = (@config['trailerts']['secret'] == params['secret'])
   raise Sinatra::NotFound, 'Forbidden' unless params.has_key?('secret')
 
-  cached_genres = get_if_cached('trailerts_genres', Proc.new { 
-    genres = Tmdb::Genre.list 
-    genres['genres'].each do |genre|
-      genre['slug'] = genre['name'].downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '')
-    end
-    genres
-  })
+  cached_genres = get_if_cached_genres
   cached_genres.to_json
 end
 
@@ -121,15 +125,29 @@ get '/api/:slug' do
   response.headers['Content-type'] = "application/json"
 
   @config = get_config
+  @genres = get_if_cached_genres
+  @matched_genres = @genres['genres'].select { |genre| genre['slug'] == params[:slug] }
 
-  {}.to_json
+  raise Sinatra::NotFound, 'Channel does not exist yet.' unless @matched_genres.length == 1
+
+  @movie_params = {
+    'with_genres' => @matched_genres[0]['id']
+  }
+
+  redis_key = 'trailerts_discover_%s' % @movie_params.hash.to_s
+
+  movies = get_if_cached(redis_key, Proc.new { Tmdb::Movie.discover @movie_params })
+  movie = movies.sample
+  movie.to_json
 end
 
 get '/:slug' do
   @slug = params[:slug]
   @config = get_config
+  @genres = get_if_cached_genres
+  @matched_genres = @genres['genres'].select { |genre| genre['slug'] == params[:slug] }
 
-  raise Sinatra::NotFound, 'Channel does not exist yet.' unless @config.has_section?(@slug)
+  raise Sinatra::NotFound, 'Channel does not exist yet.' unless @matched_genres.length == 1
 
   erb :index
 end
