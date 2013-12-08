@@ -43,7 +43,7 @@
                     <% if genre_count % 3 == 0 %>
                     <ul class="list-unstyled col-md-4">
                     <% end %>
-                    <li><a href="/<%= section['slug'] %>"><%= section['name'] %></a></li>
+                    <li><a href="/<%= section['slug'] %>" class="genre"><%= section['name'] %></a></li>
                     <% genre_count += 1 %>
                     <% if genre_count % 3 == 0 %>
                     </ul>

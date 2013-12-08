@@ -9,3 +9,8 @@
 #myytplayer {
   margin: 0 auto;
 }
+
+.genre {
+  color: #333;
+  margin: 4px 2px;
+}
