@@ -66,10 +66,10 @@ Trailerts.fetch_new_ad = function() {
     } else {
       random_url = '/api/' + Trailerts.data.slug + '?';
       if (typeof(Trailerts.min_year) != 'undefined') {
-        random_url += 'release_date.gte=' + Trailerts.min_year + '&';
+        random_url += 'release_date.gte=' + Trailerts.min_year + '-01-01&';
       }      
       if (typeof(Trailerts.max_year) != 'undefined') {
-        random_url += 'release_date.lte=' + Trailerts.max_year + '&';
+        random_url += 'release_date.lte=' + Trailerts.max_year + '-12-31&';
       }      
     }
     var random_bit = Math.round(new Date().getTime() / 1000);

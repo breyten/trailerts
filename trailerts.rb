@@ -135,7 +135,7 @@ get '/api/:slug' do
   }
 
   ['year', 'language', 'with_companies', 'vote_count.gte', 'vote_average.gte', 'release_date.gte', 'release_date.lte'].each do |param_name|
-    @movie_params[param_name.to_sym] = @params[param_name].to_i if @params.has_key?(param_name)
+    @movie_params[param_name.to_sym] = @params[param_name].to_s if @params.has_key?(param_name)
   end
 
   redis_key = 'trailerts_discover_%s' % @movie_params.hash.to_s
