@@ -13,8 +13,8 @@ var Trailerts = window.Trailerts || {
   queue: [],
   player: undefined,
   startup: true,
-  min_year: undefined,
-  max_year: undefined,
+  min_year: 1980,
+  max_year: 2015,
   fetching: false
 };
 
@@ -45,12 +45,20 @@ function onytplayerStateChange(newState) {
 
 Trailerts.init = function() {
   console.log('Trailerts inited!');
+
+  $('slider input').attr('data-slider-min', Trailerts.min_year).attr('data-slider-max', Trailerts.max_year);
+  $('#min-year').text(Trailerts.min_year);
+  $('#max-year').text(Trailerts.max_year);
+
   Trailerts.fetch_new_ad();
+
   $('.slider input').slider().on('slideStop', function(ev) {
     var period = $(this).slider('getValue').data('slider').getValue();
     console.log('Slider was used! new value: ' + period);
     Trailerts.min_year = period[0];
     Trailerts.max_year = period[1];
+    $('#min-year').text(Trailerts.min_year);
+    $('#max-year').text(Trailerts.max_year);
     if (!Trailerts.fetching) {
       Trailerts.queue = Trailerts.queue.slice(0,1); // cut off
       Trailerts.fetch_new_ad();

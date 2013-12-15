@@ -18,3 +18,15 @@
 .slider {
   margin-top: 8px;
 }
+
+li.down {
+  margin-top: 16px;
+}
+
+li.right {
+  margin-right: 16px;
+}
+
+li.left {
+  margin-left: 16px;
+}
