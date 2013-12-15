@@ -43,6 +43,7 @@ function onytplayerStateChange(newState) {
 Trailerts.init = function() {
   console.log('Trailerts inited!');
   Trailerts.fetch_new_ad();
+  $('.slider input').slider();
 };
 
 Trailerts.fetch_new_ad = function() {
