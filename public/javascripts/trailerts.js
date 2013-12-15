@@ -13,6 +13,9 @@ var Trailerts = window.Trailerts || {
   queue: [],
   player: undefined,
   startup: true,
+  min_year: undefined,
+  max_year: undefined,
+  fetching: false
 };
 
 function onYouTubePlayerReady(playerId) {
@@ -43,19 +46,36 @@ function onytplayerStateChange(newState) {
 Trailerts.init = function() {
   console.log('Trailerts inited!');
   Trailerts.fetch_new_ad();
-  $('.slider input').slider();
+  $('.slider input').slider().on('slideStop', function(ev) {
+    var period = $(this).slider('getValue').data('slider').getValue();
+    console.log('Slider was used! new value: ' + period);
+    Trailerts.min_year = period[0];
+    Trailerts.max_year = period[1];
+    if (!Trailerts.fetching) {
+      Trailerts.queue = Trailerts.queue.slice(0,1); // cut off
+      Trailerts.fetch_new_ad();
+    }
+  });
 };
 
 Trailerts.fetch_new_ad = function() {
   if (Trailerts.queue.length <= Trailerts.max_queue_length) {
     var random_url = '/api';
     if (!Trailerts.data.slug) {
-      random_url = '/api/upcoming';
+      random_url = '/api/upcoming?';
     } else {
-      random_url = '/api/' + Trailerts.data.slug;      
+      random_url = '/api/' + Trailerts.data.slug + '?';
+      if (typeof(Trailerts.min_year) != 'undefined') {
+        random_url += 'release_date.gte=' + Trailerts.min_year + '&';
+      }      
+      if (typeof(Trailerts.max_year) != 'undefined') {
+        random_url += 'release_date.lte=' + Trailerts.max_year + '&';
+      }      
     }
     var random_bit = Math.round(new Date().getTime() / 1000);
-    random_url = random_url + '?_=' + random_bit;
+    random_url = random_url + '_=' + random_bit;
+    console.log('api url: ' + random_url);
+    Trailerts.fetching = true;
     $.get(random_url, function (data) {
       var product = data.title.trim();
       console.log('got a new ad: ' + product);
@@ -69,6 +89,7 @@ Trailerts.search_youtube = function(terms) {
   $.get(
     'https://www.googleapis.com/youtube/v3/search?part=snippet&q=' + terms.replace(/\s+/g, '+').toLowerCase() + '&videoDuration=short&videoEmbeddable=true&type=video&key=AIzaSyBJJQPGXqu2BN3owWu7iIaan2exWSHZpAM',
     function (data) {
+      Trailerts.fetching = false;
       console.log('got youtube data!:');
       console.dir(data);
       if (data.items.length > 0) {
